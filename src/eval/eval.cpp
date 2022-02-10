@@ -82,25 +82,25 @@ double splitDistance(const BitVector &v1,
 {
   auto xor1 = v1 ^ v2;
   auto xor2 = v1 ^ (~v2);
-  return static_cast<double>(std::min(xor1.count(), xor2.count()));
+  auto d = static_cast<double>(std::min(xor1.count(), xor2.count())) * 2.0;
+  return d;
 }
 
 double auxGRFNaive(const SplitTable &splits1,
     const SplitTable &splits2)
 {
   double distance = 0.0;
-  size_t unionSize = 0;
+  size_t unionSize = splits1.size();
+  
   for (const auto &sp2: splits2) {
     if (splits1.find(sp2) == splits1.end()) {
+      unionSize += 1;
       for (const auto &sp1: splits1) {
         distance += splitDistance(sp1, sp2);
       }
-    } else {
-      unionSize += 1;
     }
   }
   double weight = static_cast<double>(unionSize * splits1.size());
-
   return distance / weight;
 }
 
